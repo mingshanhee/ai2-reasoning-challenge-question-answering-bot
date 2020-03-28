@@ -28,7 +28,7 @@ def get_topics_docs_dist(document_topic_relation):
   #get a topic:docs dictionary from doc:topics dictionary
   topics_docs = {}
 
-  for i in range(0,100):
+  for i in range(0,50):
    topics_docs[i] = []
 
   for k, v in document_topic_relation.items():
@@ -101,19 +101,28 @@ print("Time taken for coherence: ", timetaken)
 # for i in range(0, 50):
 #     print(topics[i])
 
-# #converting to lda model from ldamallet to make use of lda methods
-# ldamallet_to_lda_100 = gensim.models.wrappers.ldamallet.malletmodel2ldamodel(ldamallet_100, gamma_threshold=0.001, iterations=50)
+#converting to lda model from ldamallet to make use of lda methods
+ldamallet_to_lda_100 = gensim.models.wrappers.ldamallet.malletmodel2ldamodel(ldamallet_100, gamma_threshold=0.001, iterations=50)
 
-# #get list of doc_topics, word_topics, phi_values
-# all_topics = ldamallet_to_lda_100.get_document_topics(vecs_NA_lemmatized,minimum_probability=0.01, per_word_topics=True)
+#get list of doc_topics, word_topics, phi_values
+all_topics = ldamallet_to_lda_100.get_document_topics(vecs_NA_lemmatized,minimum_probability=0.01, per_word_topics=True)
 
-# #get topic_document distribution  
-# document_topic_relation = get_docs_topics_dist(all_topics)
-# topics_docs = get_topics_docs_dist(document_topic_relation)
+#get topic_document distribution  
+document_topic_relation = get_docs_topics_dist(all_topics)
+topics_docs = get_topics_docs_dist(document_topic_relation)
 
-# #sort based on highest score for each topic
-# for k,v in topics_docs.items():
-#   v =  sort_based_on_percent(v)
+#sort based on highest score for each topic
+for k,v in topics_docs.items():
+  v =  sort_based_on_percent(v)
 
-# final 
-# # topics_docs
+#Read corpus into DF so as to aid putting into final CSV
+df_corpus = pd.read_csv('/gdrive/My Drive/TM/Project/data/ARC/raw/ARC_Corpus.txt', header=None,  sep='\n',  names=['Document'], index_col=False) #change file path of arc corpus
+
+#create final df to output
+df_final = pd.DataFrame(columns=['Topic', 'Probability', 'Document Index','Document'])
+
+for k, v in topics_docs.items():
+  for i in range(0,len(v)):
+    df_final = pd.concat([df_test,pd.DataFrame([[k,v[i][1]*100, v[i][0],df_final.loc[v[i][0],'Document']]],columns=['Topic', 'Probability', 'Document Index','Document'])],join='outer')
+
+df_final.to_csv("") #insert filepath for weihao to read
