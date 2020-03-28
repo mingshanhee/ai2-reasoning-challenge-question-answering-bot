@@ -14,12 +14,6 @@ def docs2vecs(docs, dictionary):
     vecs1 = [dictionary.doc2bow(doc) for doc in docs]
     return vecs1
 
-def docs2vecs(docs, dictionary):
-    # docs is a list of documents returned by corpus2docs.
-    # dictionary is a gensim.corpora.Dictionary object.
-    vecs1 = [dictionary.doc2bow(doc) for doc in docs]
-    return vecs1
-
 def get_docs_topics_dist(all_topics):
   #get a doc:topic dictionary
   document_topic_relation = {}
